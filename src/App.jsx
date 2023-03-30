@@ -4,13 +4,22 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [ethEddress, setEthAddress] = useState("");
+  const [ethWallet, setEthWallet] = useState("");
+  const [ethBalance, setEthBalance] = useState("");
 
-  // async function greet() {
-  //   // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-  //   setGreetMsg(await invoke("public_key_address"));
-  // }
+  async function create_wallet() {
+    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+    let invoke_create = await invoke("create_wallet");
+    setEthAddress(invoke_create.public_address);
+    setEthWallet(invoke_create);
+  }
+
+  async function get_balance() {
+    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+    let invoke_create = await invoke("get_balance", { wallet: ethWallet });
+    setEthBalance(invoke_create);
+  }
 
   return (
     <div className="container">
@@ -34,19 +43,24 @@ function App() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            greet();
+            create_wallet();
           }}
         >
-          <input
-            id="greet-input"
-            onChange={(e) => setName(e.currentTarget.value)}
-            placeholder="Enter a name..."
-          />
-          {/* <button type="submit">Greet</button> */}
+          <button type="submit">Create Wallet</button>
+        </form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            get_balance();
+          }}
+        >
+          <button type="submit">Get Balance</button>
         </form>
       </div>
 
-      <p>{greetMsg}</p>
+      <p>{ethEddress}</p>
+      <br></br>
+      <p>{ethBalance}</p>
     </div>
   );
 }

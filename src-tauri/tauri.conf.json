@@ -1,4 +1,13 @@
 {
+  "tauri": {
+    "allowlist": {
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": ["https://sepolia.infura.io/*"]
+      }
+    }
+  },
   "build": {
     "beforeDevCommand": "yarn dev",
     "beforeBuildCommand": "yarn build",

@@ -52,7 +52,7 @@ impl Wallet {
     ) -> Result<f64, Box<dyn Error>> {
         let wallet_address = Address::from_str(&self.public_address)?;
         let balance_wei = web3_connection.eth().balance(wallet_address, None).await?;
-        let balance_eth = balance_wei.as_u128() as f64;
+        let balance_eth = (balance_wei.as_u128() as f64) / 1_000_000_000_000_000_000.0;
 
         Ok(balance_eth)
     }
