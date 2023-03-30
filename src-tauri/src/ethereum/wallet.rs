@@ -4,7 +4,7 @@ use std::error::Error;
 use std::io::BufWriter;
 use std::str::FromStr;
 use std::{fs::OpenOptions, io::BufReader};
-use web3::types::Address;
+use web3::{transports::WebSocket, types::Address, Web3};
 
 use super::address;
 #[derive(Serialize, Deserialize, Debug)]
@@ -44,5 +44,16 @@ impl Wallet {
         // Have to specify the type to be Wallet to tell serde_json what to deserialize to
         let wallet: Wallet = serde_json::from_reader(buf_reader)?;
         Ok(wallet)
+    }
+
+    pub async fn get_balance(
+        &self,
+        web3_connection: &Web3<WebSocket>,
+    ) -> Result<f64, Box<dyn Error>> {
+        let wallet_address = Address::from_str(&self.public_address)?;
+        let balance_wei = web3_connection.eth().balance(wallet_address, None).await?;
+        let balance_eth = balance_wei.as_u128() as f64;
+
+        Ok(balance_eth)
     }
 }
