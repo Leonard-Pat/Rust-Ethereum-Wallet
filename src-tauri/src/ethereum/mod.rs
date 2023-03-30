@@ -1,2 +1,2 @@
 pub mod address;
-pub mod key_pair;
+pub mod wallet;

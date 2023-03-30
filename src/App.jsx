@@ -7,10 +7,10 @@ function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("public_key_address"));
-  }
+  // async function greet() {
+  //   // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+  //   setGreetMsg(await invoke("public_key_address"));
+  // }
 
   return (
     <div className="container">
@@ -42,7 +42,7 @@ function App() {
             onChange={(e) => setName(e.currentTarget.value)}
             placeholder="Enter a name..."
           />
-          <button type="submit">Greet</button>
+          {/* <button type="submit">Greet</button> */}
         </form>
       </div>
 
