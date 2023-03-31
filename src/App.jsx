@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
+import Web3 from "web3";
+import dotenv from "dotenv";
 
 function App() {
   const [ethEddress, setEthAddress] = useState("");
   const [ethWallet, setEthWallet] = useState("");
   const [ethBalance, setEthBalance] = useState("");
+  const [newData, setNewData] = useState("");
 
   async function create_wallet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -20,6 +23,19 @@ function App() {
     let invoke_create = await invoke("get_balance", { wallet: ethWallet });
     setEthBalance(invoke_create);
   }
+
+  useEffect(() => {
+    let provider = import.meta.env.VITE_APP_ALCHEMY_KEY;
+    let web3Provider = new Web3.providers.WebsocketProvider(provider);
+    let web3 = new Web3(web3Provider);
+    const subscription = web3.eth
+      .subscribe("newBlockHeaders")
+      .on("data", function (blockHeader) {
+        get_balance();
+      })
+      .on("error", console.error);
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <div className="container">
