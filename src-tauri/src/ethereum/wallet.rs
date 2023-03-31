@@ -1,9 +1,11 @@
-use secp256k1::{PublicKey, SecretKey};
-use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::io::BufWriter;
 use std::str::FromStr;
 use std::{fs::OpenOptions, io::BufReader};
+
+use anyhow::Result;
+use secp256k1::{PublicKey, SecretKey};
+use serde::{Deserialize, Serialize};
 use web3::{transports::WebSocket, types::Address, Web3};
 
 use super::address;
@@ -24,20 +26,18 @@ impl Wallet {
         }
     }
 
-    pub fn save_to_file(&self, file_path: &str) -> Result<(), std::io::Error> {
+    pub fn save_to_file(&self, file_path: &str) -> Result<()> {
         let file = OpenOptions::new()
             .write(true)
             .create(true)
             .open(file_path)?;
         let buf_writer = BufWriter::new(file);
 
-        match serde_json::to_writer_pretty(buf_writer, self) {
-            Ok(()) => Ok(()),
-            Err(error) => panic!("Error serializing to json: {:?}", error),
-        }
+        serde_json::to_writer_pretty(buf_writer, self)?;
+        Ok(())
     }
 
-    pub fn from_file(file_path: &str) -> Result<Wallet, Box<dyn Error>> {
+    pub fn from_file(file_path: &str) -> Result<Wallet> {
         let file = OpenOptions::new().read(true).open(file_path)?;
 
         let buf_reader = BufReader::new(file);

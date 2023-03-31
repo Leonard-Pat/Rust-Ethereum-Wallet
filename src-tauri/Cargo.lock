@@ -232,9 +232,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.0.79"
+version = "1.0.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50d30906286121d95be3d479533b458f87493b30a4b5f79a607db8f5d11aa91f"
+checksum = "8dae9c4b8fedcae85592ba623c4fd08cfdab3e3b72d6df780c6ead964a69bfff"
 
 [[package]]
 name = "cesu8"
@@ -3175,6 +3175,7 @@ dependencies = [
 name = "tauri-crypto-wallet"
 version = "0.0.0"
 dependencies = [
+ "anyhow",
  "dotenv",
  "secp256k1 0.27.0",
  "serde",

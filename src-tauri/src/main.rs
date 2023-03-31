@@ -7,7 +7,6 @@ mod ethereum;
 use ethereum::address;
 use ethereum::connect;
 use ethereum::wallet::Wallet;
-use tauri::Manager;
 
 fn main() {
     tauri::Builder::default()
