@@ -9,6 +9,7 @@ use ethereum::connect;
 use ethereum::wallet::Wallet;
 
 fn main() {
+    address::create_mnemonic();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![create_wallet, get_balance])
         .run(tauri::generate_context!())

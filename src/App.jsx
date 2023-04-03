@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import Web3 from "web3";
 import dotenv from "dotenv";
+import { Wallet } from "ethers";
 
 function App() {
   const [ethEddress, setEthAddress] = useState("");
@@ -25,6 +26,11 @@ function App() {
   }
 
   useEffect(() => {
+    const mnemonic =
+      "broccoli immense lobster discover kitchen merge plastic hip broccoli fly medal supply";
+    const mnemonicWallet = Wallet.fromPhrase(mnemonic);
+    console.log(mnemonicWallet.address);
+    console.log("2");
     let provider = import.meta.env.VITE_APP_ALCHEMY_KEY;
     let web3Provider = new Web3.providers.WebsocketProvider(provider);
     let web3 = new Web3(web3Provider);
