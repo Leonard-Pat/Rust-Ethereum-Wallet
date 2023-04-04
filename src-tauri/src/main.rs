@@ -4,12 +4,17 @@
 use std::env;
 
 mod ethereum;
-use ethereum::address;
+use ethereum::hd_tree::{self, AllowedWordCount};
+use ethereum::wallet::Wallet;
 // use ethereum::connect;
 // use ethereum::wallet::Wallet;
 
 fn main() {
-    address::full_flow();
+    hd_tree::full_flow();
+
+    let my_wallet = Wallet::new(AllowedWordCount::Words12, Option::None);
+    println!("{:?}", my_wallet);
+
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![])
         .run(tauri::generate_context!())

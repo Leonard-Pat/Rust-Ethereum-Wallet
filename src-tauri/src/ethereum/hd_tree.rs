@@ -6,9 +6,25 @@ use secp256k1::{PublicKey, Secp256k1, SecretKey};
 use tiny_keccak::{Hasher, Keccak};
 use web3::types::Address;
 
-pub fn generate_mnemonic(word_count: usize) -> Mnemonic {
+#[allow(dead_code)]
+pub enum AllowedWordCount {
+    Words12,
+    Words15,
+    Words18,
+    Words21,
+    Words24,
+}
+
+pub fn generate_mnemonic(word_count: AllowedWordCount) -> Mnemonic {
     // Generate a word mnemonic phrase
-    Mnemonic::generate_in(Language::English, word_count).unwrap()
+    let word_count_value = match word_count {
+        AllowedWordCount::Words12 => 12,
+        AllowedWordCount::Words15 => 15,
+        AllowedWordCount::Words18 => 18,
+        AllowedWordCount::Words21 => 21,
+        AllowedWordCount::Words24 => 24,
+    };
+    Mnemonic::generate_in(Language::English, word_count_value).unwrap()
 }
 
 pub fn generate_seed(mnemonic_phrase: &Mnemonic, passphrase: Option<String>) -> [u8; 64] {
@@ -61,8 +77,8 @@ pub fn derive_child_keys(signing_key: &SigningKey) -> Result<(SecretKey, PublicK
     Ok((secret_key, public_key))
 }
 
-/// Converts a K256 SigningKey to an Ethereum Address
-pub fn secret_key_to_address(pub_key: &PublicKey) -> Address {
+/// Converts a secp256k1 PublicKey to an Ethereum address
+pub fn public_key_to_address(pub_key: &PublicKey) -> Address {
     let public_key = pub_key.serialize_uncompressed();
 
     // check first byte is hex 4 / 0x04
@@ -81,11 +97,11 @@ pub fn secret_key_to_address(pub_key: &PublicKey) -> Address {
 pub fn full_flow() -> Result<()> {
     // // Derive a child `XPrv` using the provided BIP32 derivation path
     let child_path = "m/44'/60'/0'/0";
-    let mnemonic_phrase = generate_mnemonic(12);
+    let mnemonic_phrase = generate_mnemonic(AllowedWordCount::Words12);
     let seed = generate_seed(&mnemonic_phrase, Option::None);
     let (xprv, _) = derive_child_extended_keys(seed, child_path, 0)?;
     let (secret_key, public_key) = derive_child_keys(xprv.private_key())?;
-    let ethereum_address = secret_key_to_address(&public_key);
+    let ethereum_address = public_key_to_address(&public_key);
 
     println!("Mnemonic: {}", mnemonic_phrase);
     println!("Seed: {}", hex::encode(seed));
