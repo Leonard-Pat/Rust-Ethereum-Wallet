@@ -2,17 +2,19 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::env;
+use std::path::Path;
 
 mod ethereum;
 use ethereum::hd_tree::{self, AllowedWordCount};
-use ethereum::wallet::Wallet;
+use ethereum::seed::Seed;
 // use ethereum::connect;
 // use ethereum::wallet::Wallet;
 
+pub const WALLET_FILE_PATH: &'static Path = Path::new("../../wallets");
 fn main() {
     hd_tree::full_flow();
 
-    let my_wallet = Wallet::new(AllowedWordCount::Words12, Option::None);
+    let my_wallet = Seed::new(AllowedWordCount::Words12, Option::None);
     println!("{:?}", my_wallet);
 
     tauri::Builder::default()
