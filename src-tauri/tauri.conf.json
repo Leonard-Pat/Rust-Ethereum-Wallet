@@ -1,13 +1,4 @@
 {
-  "tauri": {
-    "allowlist": {
-      "http": {
-        "all": true,
-        "request": true,
-        "scope": ["https://sepolia.infura.io/*"]
-      }
-    }
-  },
   "build": {
     "beforeDevCommand": "yarn dev",
     "beforeBuildCommand": "yarn build",
@@ -25,6 +16,13 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "fs": {
+        "all": true
+      },
+      "path": { "all": true },
+      "dialog": {
+        "all": true
       }
     },
     "bundle": {

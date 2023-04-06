@@ -2,6 +2,7 @@ use crate::WALLET_FILE_PATH;
 
 use std::error::Error;
 use std::io::BufWriter;
+use std::path::Path;
 use std::str::FromStr;
 use std::{
     fs::{File, OpenOptions},
@@ -29,9 +30,6 @@ impl Account {
         account_name: String,
         wallet_file: String,
     ) -> Result<(), String> {
-        if !WALLET_FILE_PATH.exists() {
-            // return Err(String::from("There is no file named" + wallet_file));
-        }
         let file = File::open(WALLET_FILE_PATH);
         let addr: Address = hd_tree::public_key_to_address(pub_key);
         let new_account = Account {

@@ -13,7 +13,7 @@ pub struct Seed {
 impl Seed {
     pub fn new(word_count: AllowedWordCount, passphrase: Option<String>) -> Seed {
         let mnemonic = hd_tree::generate_mnemonic(word_count);
-        let seed = hd_tree::generate_seed(&mnemonic, passphrase);
+        let seed = mnemonic.to_seed(passphrase.as_deref().unwrap_or(""));
         Seed {
             seed: seed.to_vec(),
         }
@@ -21,7 +21,7 @@ impl Seed {
 
     pub fn restore_from_phrase(words: &str, passphrase: Option<String>) -> Result<Seed> {
         let mnemonic = Mnemonic::parse_in_normalized(Language::English, words)?;
-        let seed = hd_tree::generate_seed(&mnemonic, passphrase);
+        let seed = mnemonic.to_seed(passphrase.as_deref().unwrap_or(""));
         let seed = Seed {
             seed: seed.to_vec(),
         };

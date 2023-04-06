@@ -1,21 +1,34 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::env;
-use std::path::Path;
+use std::{env, fs::File, io::BufWriter};
+
+use cocoon::Cocoon;
+use serde::Serialize;
 
 mod ethereum;
-use ethereum::hd_tree::{self, AllowedWordCount};
-use ethereum::seed::Seed;
-// use ethereum::connect;
-// use ethereum::wallet::Wallet;
 
-pub const WALLET_FILE_PATH: &'static Path = Path::new("../../wallets");
+pub const WALLET_FILE_PATH: &'static str = "../../wallets";
+
+#[derive(Serialize)]
+struct Test {
+    pub account_name: String,
+}
 fn main() {
-    hd_tree::full_flow();
+    let mut file = std::fs::File::create("data.json").expect("create failed");
 
-    let my_wallet = Seed::new(AllowedWordCount::Words12, Option::None);
-    println!("{:?}", my_wallet);
+    // Finally, you want to store your data secretly.
+    // Supply some password to Cocoon: it can be any byte array, basically.
+    // Don't use a hard-coded password in real life!
+    // It could be a user-supplied password.
+    let cocoon = Cocoon::new(b"hello");
+
+    let thingy = serde_json::to_vec(&Test {
+        account_name: String::from("this data"),
+    })
+    .unwrap();
+    // Dump the serialized database into a file as an encrypted container.
+    let container = cocoon.dump(thingy, &mut file).unwrap();
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![])

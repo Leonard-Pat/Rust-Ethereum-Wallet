@@ -5,8 +5,12 @@ import "./App.css";
 import Web3 from "web3";
 import dotenv from "dotenv";
 import { Wallet } from "ethers";
+import { open } from "@tauri-apps/api/dialog";
+import { appDataDir } from "@tauri-apps/api/path";
 
 function App() {
+  // Open a selection dialog for directories
+
   const [ethEddress, setEthAddress] = useState("");
   const [ethWallet, setEthWallet] = useState("");
   const [ethBalance, setEthBalance] = useState("");
@@ -14,34 +18,43 @@ function App() {
 
   async function create_wallet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    let invoke_create = await invoke("create_wallet");
-    setEthAddress(invoke_create.public_address);
-    setEthWallet(invoke_create);
+    // let invoke_create = await invoke("create_wallet");
+    // setEthAddress(invoke_create.public_address);
+    // setEthWallet(invoke_create);
   }
 
   async function get_balance() {
+    console.log("1");
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    let invoke_create = await invoke("get_balance", { wallet: ethWallet });
-    setEthBalance(invoke_create);
+    // let invoke_create = await invoke("get_balance", { wallet: ethWallet });
+    // setEthBalance(invoke_create);
+    const homeDirPath = await appDataDir();
+    const selected = await open({
+      directory: false,
+      multiple: false,
+      defaultPath: "./",
+    });
+    if (Array.isArray(selected)) {
+      // user selected multiple directories
+    } else if (selected === null) {
+      // user cancelled the selection
+    } else {
+      console.log(selected);
+    }
   }
 
-  useEffect(() => {
-    const mnemonic =
-      "broccoli immense lobster discover kitchen merge plastic hip broccoli fly medal supply";
-    const mnemonicWallet = Wallet.fromPhrase(mnemonic);
-    console.log(mnemonicWallet.address);
-    console.log("2");
-    let provider = import.meta.env.VITE_APP_ALCHEMY_KEY;
-    let web3Provider = new Web3.providers.WebsocketProvider(provider);
-    let web3 = new Web3(web3Provider);
-    const subscription = web3.eth
-      .subscribe("newBlockHeaders")
-      .on("data", function (blockHeader) {
-        get_balance();
-      })
-      .on("error", console.error);
-    return () => subscription.unsubscribe();
-  }, []);
+  // useEffect(() => {
+  //   let provider = import.meta.env.VITE_APP_ALCHEMY_KEY;
+  //   let web3Provider = new Web3.providers.WebsocketProvider(provider);
+  //   let web3 = new Web3(web3Provider);
+  //   const subscription = web3.eth
+  //     .subscribe("newBlockHeaders")
+  //     .on("data", function (blockHeader) {
+  //       get_balance();
+  //     })
+  //     .on("error", console.error);
+  //   return () => subscription.unsubscribe();
+  // }, []);
 
   return (
     <div className="container">

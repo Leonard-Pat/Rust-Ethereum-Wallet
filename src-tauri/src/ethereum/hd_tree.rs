@@ -27,15 +27,6 @@ pub fn generate_mnemonic(word_count: AllowedWordCount) -> Mnemonic {
     Mnemonic::generate_in(Language::English, word_count_value).unwrap()
 }
 
-pub fn generate_seed(mnemonic_phrase: &Mnemonic, passphrase: Option<String>) -> [u8; 64] {
-    // Generate a seed from mnemonic phrase where the passphrase is optional
-    // From docs as_deref:
-    // Converts from Option<T> (or &Option<T>) to Option<&T::Target>.
-    // Leaves the original Option in-place, creating a new one with a reference to the original one, additionally
-    // needed for unwrap_or to return a string slice from an Option<String>
-    mnemonic_phrase.to_seed(passphrase.as_deref().unwrap_or(""))
-}
-
 // still unsure on this
 // pub fn generate_master_private_key(seed: &[u8; 64]) -> ExtendedPrivateKey<SigningKey> {
 //     // Derive the root extended private key from a seed
@@ -98,7 +89,7 @@ pub fn full_flow() -> Result<()> {
     // // Derive a child `XPrv` using the provided BIP32 derivation path
     let child_path = "m/44'/60'/0'/0";
     let mnemonic_phrase = generate_mnemonic(AllowedWordCount::Words12);
-    let seed = generate_seed(&mnemonic_phrase, Option::None);
+    let seed = mnemonic_phrase.to_seed("");
     let (xprv, _) = derive_child_extended_keys(seed, child_path, 0)?;
     let (secret_key, public_key) = derive_child_keys(xprv.private_key())?;
     let ethereum_address = public_key_to_address(&public_key);
